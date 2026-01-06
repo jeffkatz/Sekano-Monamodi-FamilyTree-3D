@@ -1,0 +1,196 @@
+
+<div class="flex flex-col h-screen w-screen bg-[#0a0a0c] overflow-hidden font-sans text-slate-300">
+  <!-- Cinematic Header -->
+  <header class="absolute top-0 left-0 right-0 p-6 flex items-start justify-between z-30 pointer-events-none">
+    <div class="flex items-center space-x-4 pointer-events-auto">
+      <div class="bg-indigo-600 p-2.5 rounded-xl shadow-lg shadow-indigo-500/20">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-2xl font-black text-white tracking-tight leading-none drop-shadow-md">Generations of Grace</h1>
+        <p class="text-[10px] text-indigo-400 font-bold uppercase tracking-[0.2em] mt-1.5 opacity-80">3D Ancestral Topology</p>
+      </div>
+    </div>
+
+    <div class="flex items-center space-x-4 pointer-events-auto">
+      <!-- Search -->
+      <div class="relative group">
+        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+          <svg class="h-4 w-4 text-slate-500 group-focus-within:text-indigo-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </span>
+        <input 
+          type="text" 
+          (input)="onSearch($event)"
+          placeholder="Locate ancestor..." 
+          class="block w-64 pl-10 pr-4 py-2 bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-xl leading-5 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all shadow-xl"
+        >
+      </div>
+    </div>
+  </header>
+
+  <!-- Side Navigation & Filters -->
+  <aside class="absolute top-28 left-6 bg-slate-900/40 backdrop-blur-xl p-5 rounded-2xl border border-white/5 shadow-2xl z-20 pointer-events-auto w-64 flex flex-col space-y-6">
+    <div>
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Controls</h3>
+        <span class="bg-indigo-500/10 text-indigo-400 text-[10px] px-2 py-0.5 rounded-full font-bold border border-indigo-500/20">{{ totalMembers() }} souls</span>
+      </div>
+      
+      <!-- Auto Rotation -->
+      <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl mb-4 border border-white/5">
+        <span class="text-xs font-semibold text-slate-400">Celestial Spin</span>
+        <button 
+          (click)="toggleRotation()"
+          [class.bg-indigo-500]="isRotating()"
+          [class.bg-slate-700]="!isRotating()"
+          class="w-10 h-5 rounded-full relative transition-colors"
+        >
+          <div 
+            [class.translate-x-5]="isRotating()"
+            [class.translate-x-1]="!isRotating()"
+            class="absolute top-1 w-3 h-3 bg-white rounded-full transition-transform"
+          ></div>
+        </button>
+      </div>
+
+      <!-- Generation Slider -->
+      <div class="space-y-3">
+        <div class="flex justify-between items-center">
+          <span class="text-xs font-semibold text-slate-400">Generation Depth</span>
+          <span class="text-[10px] font-bold text-indigo-400">{{ maxGeneration() }}</span>
+        </div>
+        <input 
+          type="range" 
+          min="0" 
+          max="8" 
+          step="1" 
+          [value]="maxGeneration()"
+          (input)="updateMaxGeneration($event)"
+          class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+        >
+        <div class="flex justify-between text-[8px] text-slate-600 font-black uppercase">
+          <span>Root</span>
+          <span>Max</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="pt-4 border-t border-white/5 space-y-4">
+      <div class="flex items-center space-x-3">
+        <div class="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.5)]"></div>
+        <span class="text-xs text-slate-300 font-semibold">Roots</span>
+      </div>
+      <div class="flex items-center space-x-3">
+        <div class="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]"></div>
+        <span class="text-xs text-slate-300 font-semibold">Sekano</span>
+      </div>
+      <div class="flex items-center space-x-3">
+        <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+        <span class="text-xs text-slate-300 font-semibold">Monamodi</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Person Detail Modal (Sidebar) -->
+  @if (selectedPerson()) {
+    <div 
+      class="absolute top-0 right-0 h-full w-96 bg-slate-900/80 backdrop-blur-2xl border-l border-white/10 z-40 shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col transform transition-transform"
+    >
+      <div class="p-8 flex-1 overflow-y-auto">
+        <div class="flex justify-between items-start mb-8">
+          <div class="bg-indigo-500/10 p-3 rounded-2xl border border-indigo-500/20">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+          <button (click)="closeDetails()" class="p-2 hover:bg-white/5 rounded-full transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <h2 class="text-2xl font-bold text-white mb-2">{{ selectedPerson().name }}</h2>
+        <div class="flex items-center space-x-2 mb-6">
+          <span class="text-[10px] uppercase font-black tracking-widest text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">
+            {{ selectedPerson().type?.replace('_', ' ') || 'Member' }}
+          </span>
+          @if (selectedPerson().born) {
+            <span class="text-[10px] font-bold text-slate-500">Born {{ selectedPerson().born }}</span>
+          }
+        </div>
+
+        @if (selectedPerson().spouse) {
+          <div class="mb-6 p-4 bg-white/5 rounded-2xl border border-white/5">
+            <p class="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1">Union</p>
+            <p class="text-sm text-slate-300 font-semibold">{{ selectedPerson().spouse }}</p>
+          </div>
+        }
+
+        @if (selectedPerson().notes) {
+          <div class="mb-8">
+            <p class="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-2">Ancestral Notes</p>
+            <p class="text-sm text-slate-400 leading-relaxed italic border-l-2 border-indigo-500/30 pl-4">
+              "{{ selectedPerson().notes }}"
+            </p>
+          </div>
+        }
+
+        <!-- Descendants List -->
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <p class="text-[10px] font-black uppercase text-slate-500 tracking-widest">Descendants</p>
+            <span class="text-[10px] font-bold text-indigo-400">{{ descendants().length }} found</span>
+          </div>
+          
+          <div class="space-y-2">
+            @for (desc of descendants(); track desc.name) {
+              <div class="p-3 bg-white/5 hover:bg-white/10 rounded-xl border border-white/5 transition-colors cursor-pointer group">
+                <p class="text-xs font-bold text-slate-300 group-hover:text-white transition-colors">{{ desc.name }}</p>
+                <p class="text-[9px] text-slate-500 mt-0.5 uppercase tracking-tighter">{{ desc.type?.replace('_', ' ') || 'Direct Descendant' }}</p>
+              </div>
+            } @empty {
+              <p class="text-xs text-slate-600 italic">No further lineage recorded.</p>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- 3D Scene Area -->
+  <main class="flex-1 relative z-10 overflow-hidden">
+    <!-- Overlay Controls -->
+    <div class="absolute bottom-10 right-10 flex items-center space-x-3 z-30 pointer-events-auto">
+      <button (click)="resetZoom()" title="Center View" class="group flex items-center space-x-2 px-5 py-3 bg-indigo-600/90 hover:bg-indigo-600 text-white rounded-2xl shadow-2xl transition-all active:scale-95 border border-indigo-400/20">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+        <span class="text-xs font-bold uppercase tracking-widest">Overview</span>
+      </button>
+    </div>
+
+    <!-- The 3D Component -->
+    <app-family-tree 
+      #treeComponent
+      [data]="familyData" 
+      [search]="searchTerm()"
+      [maxGen]="maxGeneration()"
+      [autoRotate]="isRotating()"
+      (nodeSelected)="onNodeSelected($event)"
+      class="w-full h-full block"
+    ></app-family-tree>
+  </main>
+
+  <!-- Footer Stats -->
+  <footer class="absolute bottom-0 left-0 right-0 p-6 flex justify-between items-center text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em] z-30 pointer-events-none">
+    <div class="pointer-events-auto bg-slate-900/40 backdrop-blur p-2 px-4 rounded-full border border-white/5 italic">
+      Orbit with Left Click • Pan with Right Click • Zoom with Scroll
+    </div>
+  </footer>
+</div>

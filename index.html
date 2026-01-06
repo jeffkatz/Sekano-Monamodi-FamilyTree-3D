@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generations of Grace - 3D</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #0a0a0c;
+    }
+    canvas {
+      display: block;
+    }
+    .label-container {
+      pointer-events: none;
+      user-select: none;
+    }
+    .node-label {
+      color: white;
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(8px);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      white-space: nowrap;
+      pointer-events: auto;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    .node-label:hover {
+      background: rgba(79, 70, 229, 0.9);
+      transform: scale(1.1) translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 8px 24px rgba(79, 70, 229, 0.4);
+      z-index: 100;
+    }
+    .node-label.highlighted {
+      background: rgba(251, 191, 36, 0.9);
+      color: #0f172a;
+      border-color: #f59e0b;
+      box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+    }
+    .node-label.focused-label {
+      background: #6366f1;
+      color: white;
+      border-color: #818cf8;
+      transform: scale(1.2);
+      box-shadow: 0 0 30px rgba(99, 102, 241, 0.6);
+      z-index: 200;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "rxjs": "https://esm.sh/rxjs@^7.8.2?conditions=es2015",
+    "rxjs/operators": "https://esm.sh/rxjs@^7.8.2/operators?conditions=es2015",
+    "@angular/common": "https://esm.sh/@angular/common@^21.0.6?external=rxjs",
+    "@angular/compiler": "https://esm.sh/@angular/compiler@^21.0.6?external=rxjs",
+    "@angular/platform-browser": "https://esm.sh/@angular/platform-browser@^21.0.6?external=rxjs",
+    "@angular/core": "https://esm.sh/@angular/core@^21.0.6?external=rxjs",
+    "three": "https://esm.sh/three@0.160.0",
+    "three/examples/jsm/controls/OrbitControls": "https://esm.sh/three@0.160.0/examples/jsm/controls/OrbitControls",
+    "three/examples/jsm/renderers/CSS2DRenderer": "https://esm.sh/three@0.160.0/examples/jsm/renderers/CSS2DRenderer",
+    "d3": "https://esm.sh/d3@7.8.5",
+    "gsap": "https://esm.sh/gsap@3.12.5"
+  }
+}
+</script>
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>
